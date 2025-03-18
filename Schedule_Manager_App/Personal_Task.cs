@@ -1,26 +1,15 @@
-﻿using System;
-using System.Xml.Linq;
-
-public class PersonalTask : Task
+﻿class PersonalTask : BaseTask
 {
-    public string Frequency { get; private set; }
+    public string Frequency { get; set; }
 
-    public PersonalTask(string name, string notes, DateTime startTime, DateTime endTime, string frequency)
-        : base(name, notes, startTime, endTime)
+    public PersonalTask(string taskName, DateTime startTime, DateTime endTime, string frequency)
+        : base(taskName, startTime, endTime)
     {
-        Frequency = frequency;
-    }
-
-    public override string GetTaskType()
-    {
-        return "Personal Task";
+        this.Frequency = frequency;
     }
 
     public override void Display()
     {
-        Console.WriteLine("=== Personal Task ===");
-        Console.WriteLine("Task: " + Name);
-        Console.WriteLine("Frequency: " + Frequency);
-        Console.WriteLine("Status: " + (IsCompleted ? "Completed" : "Not Completed"));
+        Console.WriteLine("[Personal Task] " + TaskName + " - Time " + StartTime.TimeOfDay);
     }
 }

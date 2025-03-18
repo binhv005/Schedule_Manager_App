@@ -1,59 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
-public class DailySchedule
+class DailySchedule
 {
-    public DateTime Date { get; private set; }
-    private List<Task> Tasks;
+    public string Day { get; set; }
+    public string Week { get; set; }
+    public List<BaseTask> DailyTasks { get; set; }
 
-    public DailySchedule(DateTime date)
+    public DailySchedule(string day, string week)
     {
-        Date = date;
-        Tasks = new List<Task>();
+        this.Day = day;
+        this.Week = week;
+        this.DailyTasks = new List<BaseTask>();
     }
 
-    public void AddTask(Task task)
+    public void AddTask(BaseTask task)
     {
-        if (task == null)
-        {
-            throw new ArgumentNullException(nameof(task), "Task cannot be null.");
-        }
-        Tasks.Add(task);
+        this.DailyTasks.Add(task);
     }
 
-    public void RemoveTask(string taskName)
+    public void DisplayTasks()
     {
-        for (int i = 0; i < Tasks.Count; i++)
-        {
-            if (!string.IsNullOrEmpty(Tasks[i].Name) && Tasks[i].Name.Equals(taskName, StringComparison.OrdinalIgnoreCase))
-            {
-                Tasks.RemoveAt(i);
-                Console.WriteLine($"Công việc '{taskName}' đã được xóa.");
-                return;
-            }
-        }
-        Console.WriteLine($"Không tìm thấy công việc '{taskName}' để xóa.");
-    }
+        Console.WriteLine("📅 Ngày: " + this.Day);
 
-    public void DisplayDay()
-    {
-        Console.WriteLine("=== Lịch ngày: " + Date.ToString("dd/MM/yyyy") + " ===");
+        DateTime currentDay;
+        bool isValidDate = DateTime.TryParseExact(this.Day, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDay);
 
-        if (Tasks.Count == 0)
+        if (!isValidDate)
         {
-            Console.WriteLine("Không có công việc nào.");
+            Console.WriteLine("❌ Lỗi: Ngày không hợp lệ.");
             return;
         }
 
-        for (int i = 0; i < Tasks.Count; i++)
-        {
-            Task task = Tasks[i];
+        bool hasTask = false;
 
-            // Chỉ hiển thị tên và trạng thái của Task
-            if (task != null)
+        for (int i = 0; i < this.DailyTasks.Count; i++)
+        {
+            BaseTask task = this.DailyTasks[i];
+
+            if (task.StartTime.Date == currentDay.Date)
             {
-                Console.WriteLine($"- {task.Name} ({task.GetTaskType()}), Trạng thái: {(task.IsCompleted ? "Hoàn thành" : "Chưa hoàn thành")}");
+                task.Display();
+                hasTask = true;
             }
+        }
+
+        if (!hasTask)
+        {
+            Console.WriteLine("❌ Không có nhiệm vụ nào trong ngày này.");
         }
     }
 }

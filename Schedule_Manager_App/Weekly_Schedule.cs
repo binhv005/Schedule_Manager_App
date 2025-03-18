@@ -1,76 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class WeeklySchedule
+class WeeklySchedule
 {
-    private Dictionary<DateTime, DailySchedule> dailySchedules;
+    public string Week { get; set; }
+    public List<DailySchedule> DailySchedules { get; set; }
 
-    public WeeklySchedule()
+    public WeeklySchedule(string week)
     {
-        dailySchedules = new Dictionary<DateTime, DailySchedule>();
+        this.Week = week;
+        this.DailySchedules = new List<DailySchedule>();
     }
 
-    public void AddTask(DateTime date, Task task)
+    public void AddDailySchedule(DailySchedule dailySchedule)
     {
-        if (task == null)
+        if (dailySchedule == null)
         {
-            throw new ArgumentNullException("task", "Task cannot be null.");
+            Console.WriteLine("❌ Lỗi: Lịch ngày không hợp lệ.");
+            return;
         }
-
-        if (!dailySchedules.ContainsKey(date))
-        {
-            dailySchedules[date] = new DailySchedule(date);
-        }
-
-        dailySchedules[date].AddTask(task);
+        this.DailySchedules.Add(dailySchedule);
     }
 
-    public void DisplayWeek(DateTime startDate)
+    public void DisplayWeeklySchedule()
     {
-        DateTime endDate = startDate.AddDays(6);
-        Console.WriteLine("=== Lịch tuần từ " + startDate.ToString("dd/MM/yyyy") + " đến " + endDate.ToString("dd/MM/yyyy") + " ===");
+        Console.WriteLine("📆 Lịch tuần: " + this.Week);
 
-        for (int i = 0; i < 7; i++)
+        if (this.DailySchedules.Count == 0)
         {
-            DateTime currentDate = startDate.AddDays(i);
-            if (dailySchedules.ContainsKey(currentDate))
-            {
-                dailySchedules[currentDate].DisplayDay();
-            }
-            else
-            {
-                Console.WriteLine(currentDate.ToString("dd/MM/yyyy") + ": Không có công việc nào.");
-            }
-        }
-    }
-
-    public void DisplayDay(DateTime date)
-    {
-        if (dailySchedules.ContainsKey(date))
-        {
-            dailySchedules[date].DisplayDay();
-        }
-        else
-        {
-            Console.WriteLine("Không có công việc nào cho ngày " + date.ToString("dd/MM/yyyy") + ".");
-        }
-    }
-
-    public void RemoveTask(DateTime date, string taskName)
-    {
-        if (string.IsNullOrWhiteSpace(taskName))
-        {
-            Console.WriteLine("Tên công việc không hợp lệ.");
+            Console.WriteLine("❌ Không có lịch ngày nào trong tuần này.");
             return;
         }
 
-        if (dailySchedules.ContainsKey(date))
+        for (int i = 0; i < this.DailySchedules.Count; i++)
         {
-            dailySchedules[date].RemoveTask(taskName);
-        }
-        else
-        {
-            Console.WriteLine("Không có công việc nào vào ngày " + date.ToString("dd/MM/yyyy") + ".");
+            this.DailySchedules[i].DisplayTasks();
         }
     }
 }

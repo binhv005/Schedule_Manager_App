@@ -1,25 +1,17 @@
 ﻿using System;
 
-public class EventTask : Task
+class EventTask : BaseTask
 {
-    public string Location { get; private set; }
+    public string Location { get; set; }
 
-    public EventTask(string name, string notes, DateTime startTime, DateTime endTime, string location)
-        : base(name, notes, startTime, endTime)
+    public EventTask(string taskName, DateTime startTime, DateTime endTime, string location)
+        : base(taskName, startTime, endTime)
     {
-        Location = location;
-    }
-
-    public override string GetTaskType()
-    {
-        return "Event Task";
+        this.Location = location;
     }
 
     public override void Display()
     {
-        Console.WriteLine("=== Event Task ===");
-        Console.WriteLine("Event: " + Name);
-        Console.WriteLine("Location: " + Location);
-        Console.WriteLine("Status: " + (IsCompleted ? "Completed" : "Not Completed"));
+        Console.WriteLine("[Event Task] " + TaskName + " - Địa điểm: " + Location + " - Thời gian: " + StartTime.TimeOfDay + " - " + EndTime.TimeOfDay);
     }
 }

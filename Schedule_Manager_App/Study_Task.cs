@@ -1,29 +1,31 @@
 ﻿using System;
-using System.Xml.Linq;
 
-public class StudyTask : Task
+class StudyTask : BaseTask
 {
-    public string Subject { get; private set; }
-    public DateTime Deadline { get; private set; }
+    public string Subject { get; set; }
+    public DateTime Deadline { get; set; }
 
-    public StudyTask(string name, string notes, DateTime startTime, DateTime endTime, string subject, DateTime deadline)
-        : base(name, notes, startTime, endTime)
+    public StudyTask(string taskName, DateTime startTime, DateTime endTime, string subject, DateTime deadline)
+        : base(taskName, startTime, endTime)
     {
-        Subject = subject;
-        Deadline = deadline;
-    }
-
-    public override string GetTaskType()
-    {
-        return "Study Task";
+        this.Subject = subject;
+        this.Deadline = deadline;
     }
 
     public override void Display()
     {
-        Console.WriteLine("=== Study Task ===");
-        Console.WriteLine("Subject: " + Subject);
-        Console.WriteLine("Task: " + Name);
-        Console.WriteLine("Deadline: " + Deadline.ToString("yyyy-MM-dd HH:mm"));
-        Console.WriteLine("Status: " + (IsCompleted ? "Completed" : "Not Completed"));
+        Console.WriteLine("[Study Task] " + TaskName + " - Môn học: " + Subject + " - Deadline: " + Deadline.ToShortDateString() + " - Thời gian: " + StartTime.TimeOfDay + " - " + EndTime.TimeOfDay);
+    }
+
+    public void CheckDeadline()
+    {
+        if (DateTime.Now > Deadline)
+        {
+            Console.WriteLine("❌ Nhiệm vụ '" + TaskName + "' đã quá hạn! Deadline là " + Deadline.ToShortDateString());
+        }
+        else
+        {
+            Console.WriteLine("⏳ Deadline của '" + TaskName + "' là " + Deadline.ToShortDateString());
+        }
     }
 }

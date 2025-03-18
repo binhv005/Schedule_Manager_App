@@ -1,50 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class UserManager
+class UserManager
 {
     private static UserManager instance;
-    private Dictionary<string, User> users;
+    private Dictionary<int, User> users;
 
     private UserManager()
     {
-        users = new Dictionary<string, User>();
+        this.users = new Dictionary<int, User>();
     }
 
-    public static UserManager Instance
+    public static UserManager GetInstance()
     {
-        get
+        if (instance == null)
         {
-            if (instance == null)
+            instance = new UserManager();
+        }
+        return instance;
+    }
+
+    // ✅ Đăng ký người dùng
+    public bool Register(string userName, string password)
+    {
+        foreach (KeyValuePair<int, User> entry in users)
+        {
+            if (entry.Value.GetUserName() == userName)
             {
-                instance = new UserManager();
+                Console.WriteLine("❌ Tên người dùng đã tồn tại!");
+                return false;
             }
-            return instance;
-        }
-    }
-
-    public bool Register(string username, string password)
-    {
-        if (users.ContainsKey(username))
-        {
-            Console.WriteLine("Tên đăng nhập đã tồn tại.");
-            return false;
         }
 
-        User newUser = new User(users.Count + 1, username, password);
-        users[username] = newUser;
-        Console.WriteLine("Đăng ký thành công!");
+        User newUser = new User(userName, password);
+        users.Add(newUser.GetUserId(), newUser);
+        Console.WriteLine("✅ Đăng ký thành công!");
         return true;
     }
 
-    public User Login(string username, string password)
+    // ✅ Xác thực đăng nhập
+    public User? Authenticate(string userName, string password)
     {
-        if (users.ContainsKey(username) && users[username].Authenticate(password))
+        foreach (KeyValuePair<int, User> entry in users)
         {
-            return users[username];
+            if (entry.Value.GetUserName() == userName && entry.Value.Authenticate(password))
+            {
+                Console.WriteLine("✅ Đăng nhập thành công!");
+                return entry.Value;
+            }
         }
-
-        Console.WriteLine("Sai tên đăng nhập hoặc mật khẩu.");
+        Console.WriteLine("❌ Sai tên người dùng hoặc mật khẩu!");
         return null;
+    }
+
+    // ✅ Hiển thị danh sách người dùng
+    public void DisplayUsers()
+    {
+        Console.WriteLine("\n📌 Danh sách người dùng:");
+        foreach (KeyValuePair<int, User> entry in users)
+        {
+            Console.WriteLine($"🆔 ID: {entry.Key} | 👤 {entry.Value.GetUserName()}");
+        }
     }
 }

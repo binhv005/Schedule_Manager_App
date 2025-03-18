@@ -4,29 +4,82 @@ using System.Text;
 
 public class User
 {
-    public int ID { get; private set; }
-    public string Username { get; private set; }
-    private string PasswordHash;
+    private static int userCount = 0; // Biến đếm số lượng user
+    private int userId;
+    private string userName;
+    private string passwordHash = ""; // Gán giá trị mặc định để tránh lỗi null
 
-    public User(int id, string username, string password)
+    public delegate void UserEventHandler(User user);
+    public event UserEventHandler OnUserRegistered;
+    public event UserEventHandler OnUserLoggedIn;
+    public event UserEventHandler OnPasswordChanged;
+
+    public User(string userName, string password)
     {
-        ID = id;
-        Username = username;
-        PasswordHash = HashPassword(password);
+        this.userId = ++userCount; // Tăng biến đếm mỗi khi tạo user mới
+        this.userName = userName;
+        SetPassword(password);
+
+        OnUserRegistered?.Invoke(this);
+    }
+
+    public int GetUserId()
+    {
+        return userId;
+    }
+
+    public string GetUserName()
+    {
+        return userName;
+    }
+
+    public static int GetUserCount()
+    {
+        return userCount;
+    }
+
+    private void SetPassword(string password)
+    {
+        passwordHash = HashPassword(password);
     }
 
     private string HashPassword(string password)
     {
-        using (SHA256 sha256 = SHA256.Create())
-        {
-            byte[] bytes = Encoding.UTF8.GetBytes(password);
-            byte[] hashBytes = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hashBytes);
-        }
+        SHA256 sha256 = SHA256.Create();
+        byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+        return BitConverter.ToString(bytes).Replace("-", "").ToLower();
     }
 
     public bool Authenticate(string password)
     {
-        return PasswordHash == HashPassword(password);
+        return passwordHash == HashPassword(password);
+    }
+
+    public bool ChangePassword(string oldPassword, string newPassword)
+    {
+        if (!Authenticate(oldPassword))
+        {
+            Console.WriteLine("❌ Mật khẩu cũ không đúng!");
+            return false;
+        }
+
+        SetPassword(newPassword);
+        Console.WriteLine("🔐 Mật khẩu đã thay đổi thành công!");
+
+        OnPasswordChanged?.Invoke(this);
+        return true;
+    }
+
+    public void Login(string password)
+    {
+        if (Authenticate(password))
+        {
+            Console.WriteLine("✅ " + userName + " đã đăng nhập thành công!");
+            OnUserLoggedIn?.Invoke(this);
+        }
+        else
+        {
+            Console.WriteLine("❌ Sai mật khẩu!");
+        }
     }
 }
