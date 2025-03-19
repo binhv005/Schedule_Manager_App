@@ -5,6 +5,7 @@ class StudyTask : BaseTask
     public string Subject { get; set; }
     public DateTime Deadline { get; set; }
 
+    public StudyTask() { }
     public StudyTask(string taskName, DateTime startTime, DateTime endTime, string subject, DateTime deadline)
         : base(taskName, startTime, endTime)
     {

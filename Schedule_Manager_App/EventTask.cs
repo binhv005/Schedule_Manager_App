@@ -4,6 +4,9 @@ class EventTask : BaseTask
 {
     public string Location { get; set; }
 
+    // Constructor rỗng
+    public EventTask() { }
+
     public EventTask(string taskName, DateTime startTime, DateTime endTime, string location)
         : base(taskName, startTime, endTime)
     {

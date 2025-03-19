@@ -18,6 +18,6 @@ abstract class BaseTask
         this.StartTime = startTime;
         this.EndTime = endTime;
     }
-
+    public BaseTask() { }
     public abstract void Display();
 }

@@ -1,7 +1,7 @@
 ﻿class PersonalTask : BaseTask
 {
     public string Frequency { get; set; }
-
+    public PersonalTask() { }
     public PersonalTask(string taskName, DateTime startTime, DateTime endTime, string frequency)
         : base(taskName, startTime, endTime)
     {
